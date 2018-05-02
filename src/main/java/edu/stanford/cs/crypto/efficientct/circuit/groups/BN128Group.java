@@ -1,5 +1,6 @@
 package edu.stanford.cs.crypto.efficientct.circuit.groups;
 
+import org.bouncycastle.math.ec.ECConstants;
 import org.bouncycastle.math.ec.ECCurve;
 import org.bouncycastle.math.ec.ECPoint;
 
@@ -30,7 +31,7 @@ public class BN128Group extends BouncyCastleCurve {
             seed = seed.add(BigInteger.ONE);
             BigInteger ySquared = seed.pow(3).add(BigInteger.valueOf(3)).mod(P);
             y = ySquared.modPow((P.add(BigInteger.ONE)).divide(BigInteger.valueOf(4)), P);
-            if (y.modPow(BigInteger.TWO, P).equals(ySquared)) {
+            if (y.modPow(ECConstants.TWO, P).equals(ySquared)) {
                 break;
             }
         } while (true);

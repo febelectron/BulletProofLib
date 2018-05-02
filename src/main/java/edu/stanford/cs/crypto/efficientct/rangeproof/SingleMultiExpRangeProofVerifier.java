@@ -12,6 +12,7 @@ import edu.stanford.cs.crypto.efficientct.linearalgebra.GeneratorVector;
 import edu.stanford.cs.crypto.efficientct.linearalgebra.PeddersenBase;
 import edu.stanford.cs.crypto.efficientct.linearalgebra.VectorBase;
 import edu.stanford.cs.crypto.efficientct.util.ProofUtils;
+import org.bouncycastle.math.ec.ECConstants;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -73,7 +74,7 @@ public class SingleMultiExpRangeProofVerifier<T extends GroupElement<T>> impleme
             T r = rs.get(i);
             BigInteger xIP = ProofUtils.computeChallenge(q, l, r);
             challenges.add(xIP);
-            squareChallenges.add(xIP.modPow(BigInteger.TWO,q));
+            squareChallenges.add(xIP.modPow(ECConstants.TWO,q));
 
 
         }

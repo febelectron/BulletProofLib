@@ -2,12 +2,21 @@ package edu.stanford.cs.crypto.efficientct.circuit.groups;
 
 import org.bouncycastle.math.ec.ECPoint;
 
+import java.io.*;
 import java.math.BigInteger;
 
-public class BouncyCastleECPoint implements GroupElement<BouncyCastleECPoint> {
+public class BouncyCastleECPoint implements GroupElement<BouncyCastleECPoint>, Externalizable {
     public static int expCount=0;
     public static int addCount=0;
-    private final ECPoint point;
+
+    private ECPoint point;
+
+    public BouncyCastleECPoint() {
+    }
+
+    public BouncyCastleECPoint(ObjectInput in) throws IOException {
+        readExternal(in);
+    }
 
     public BouncyCastleECPoint(ECPoint point) {
         this.point = point;
@@ -66,5 +75,18 @@ public class BouncyCastleECPoint implements GroupElement<BouncyCastleECPoint> {
     @Override
     public int hashCode() {
         return point != null ? point.hashCode() : 0;
+    }
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.write(point.getEncoded(true));
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException {
+        BouncyCastleCurve curve = Secp256k1.INSTANCE;
+        byte[] b = new byte[33]; //todo: check if it always?
+        in.read(b);
+        this.point = curve.getCurve().decodePoint(b);
     }
 }

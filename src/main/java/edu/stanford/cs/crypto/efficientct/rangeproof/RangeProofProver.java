@@ -66,6 +66,11 @@ public class RangeProofProver<T extends GroupElement<T>> implements Prover<Gener
         BigInteger t = evalCommit.getX();
         BigInteger mu = alpha.add(rho.multiply(x)).mod(q);
 
+        // febelectron: serialization doesn't work START
+        tauX = tauX.mod(q);
+        t = t.mod(q);
+        // febelectron: serialization doesn't work END
+
         BigInteger uChallenge = ProofUtils.challengeFromints(q,tauX, mu, t);
         T u = base.g.multiply(uChallenge);
         GeneratorVector<T> hs = vectorBase.getHs();

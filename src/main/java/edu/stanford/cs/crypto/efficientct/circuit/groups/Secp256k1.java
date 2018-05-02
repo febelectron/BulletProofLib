@@ -9,6 +9,9 @@ import org.bouncycastle.math.ec.custom.sec.SecP256K1FieldElement;
 import java.math.BigInteger;
 
 public class Secp256k1 extends BouncyCastleCurve {
+
+    public static Secp256k1 INSTANCE = new Secp256k1();
+
     public Secp256k1() {
         super(new SecP256K1Curve(), CustomNamedCurves.getByName("secp256k1").getG());
     }

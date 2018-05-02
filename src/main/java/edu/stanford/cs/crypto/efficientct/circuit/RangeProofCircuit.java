@@ -6,6 +6,7 @@ import edu.stanford.cs.crypto.efficientct.circuit.groups.GroupElement;
 import edu.stanford.cs.crypto.efficientct.commitments.PeddersenCommitment;
 import edu.stanford.cs.crypto.efficientct.linearalgebra.FieldVector;
 import edu.stanford.cs.crypto.efficientct.linearalgebra.GeneratorVector;
+import org.bouncycastle.math.ec.ECConstants;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -45,7 +46,7 @@ public class RangeProofCircuit {
             cs.add(BigInteger.ZERO);
 
         }
-        lWeights.add(FieldVector.pow(BigInteger.valueOf(2), numberOfBits, q));
+        lWeights.add(FieldVector.pow(ECConstants.TWO, numberOfBits, q));
         rWeights.add(zeroVector);
         oWeights.add(zeroVector);
         vWeights.add(FieldVector.from(VectorX.of(BigInteger.ONE), q));

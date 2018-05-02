@@ -1,9 +1,15 @@
 package edu.stanford.cs.crypto.efficientct.innerproduct;
 
 import edu.stanford.cs.crypto.efficientct.Proof;
+import edu.stanford.cs.crypto.efficientct.circuit.groups.BouncyCastleECPoint;
 import edu.stanford.cs.crypto.efficientct.circuit.groups.GroupElement;
 
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -11,11 +17,18 @@ import java.util.stream.Stream;
 /**
  * Created by buenz on 6/28/17.
  */
-public class InnerProductProof<T extends GroupElement<T>> implements Proof {
-    private final List<T> L;
-    private final List<T> R;
-    private final BigInteger a;
-    private final BigInteger b;
+public class InnerProductProof<T extends GroupElement<T>> implements Proof, Externalizable {
+    private List<T> L;
+    private List<T> R;
+    private BigInteger a;
+    private BigInteger b;
+
+    public InnerProductProof() {
+    }
+
+    public InnerProductProof(ObjectInput in) throws IOException, ClassNotFoundException {
+        readExternal(in);
+    }
 
     public InnerProductProof(List<T> l, List<T> r, BigInteger a, BigInteger b) {
         L = l;
@@ -54,5 +67,57 @@ public class InnerProductProof<T extends GroupElement<T>> implements Proof {
             currIndex += arr2.length;
         }
         return fullArray;
+    }
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeInt(L.size());
+        for (T t : L) {
+            byte[] x = t.canonicalRepresentation();
+            out.write(x);
+        }
+        out.writeInt(R.size());
+        for (T t : R) {
+            byte[] x = t.canonicalRepresentation();
+            out.write(x);
+        }
+
+        byte[] aBytes = a.toByteArray();
+        out.writeInt(aBytes.length);
+        out.write(aBytes);
+
+        byte[] bBytes = b.toByteArray();
+        out.writeInt(bBytes.length);
+        out.write(bBytes);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void readExternal(ObjectInput in) throws IOException {
+        int l = in.readInt();
+        L = new ArrayList<>(l);
+        for (int i = 0; i < l; i++) {
+            BouncyCastleECPoint p = new BouncyCastleECPoint();
+            p.readExternal(in);
+            L.add((T) p);
+        }
+
+        int r = in.readInt();
+        R = new ArrayList<>(r);
+        for (int i = 0; i < r; i++) {
+            BouncyCastleECPoint p = new BouncyCastleECPoint();
+            p.readExternal(in);
+            R.add((T) p);
+        }
+
+        int t1Len = in.readInt();
+        byte[] t1 = new byte[t1Len];
+        in.read(t1);
+        a = new BigInteger(t1);
+
+        int t2Len = in.readInt();
+        byte[] t2 = new byte[t2Len];
+        in.read(t2);
+        b = new BigInteger(t2);
     }
 }
